@@ -6,7 +6,9 @@
 
 (defvar- #^JsonFactory factory (JsonFactory.))
 
-(defn generate-string [obj]
+(defn generate-string
+  {:tag String}
+  [obj]
   (let [sw        (StringWriter.)
         generator (.createJsonGenerator factory sw)]
     (JsonExt/generate generator obj)
