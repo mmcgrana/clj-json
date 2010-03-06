@@ -5,7 +5,7 @@ Fast JSON encoding and decoding for Clojure via the Jackson library.
 ## Synopsis
 
     (require '(clj-json [core :as json]))
-    (import '(java.io StringWriter StringReader BufferedReader))
+    (import '(java.io StringReader BufferedReader))
     
     (json/generate-string {"foo" "bar"})
     "{\"foo\":\"bar\"}"
@@ -27,12 +27,12 @@ Fast JSON encoding and decoding for Clojure via the Jackson library.
 `clj-json` can generate JSON for maps, vectors, lists, keywords, strings, integers, doubles, and booleans.
 
 Note that keywords generate as strings without a leading :, and will
-read via `parse-string` and `parsed-seq` as as such strings.
+read via `parse-string` and `parsed-seq` as strings.
 
 ## Development
 
 To build, test, and package the `clj-json` source:
-
+    
     $ lein deps
     $ lein compile-java
     $ lein test
