@@ -1,10 +1,12 @@
 (ns clj-json.core
   (:import (clj_json JsonExt)
-           (org.codehaus.jackson JsonFactory JsonParser)
+           (org.codehaus.jackson JsonFactory JsonParser JsonParser$Feature)
            (java.io StringWriter StringReader BufferedReader))
   (:use (clojure.contrib [def :only (defvar-)])))
 
-(defvar- #^JsonFactory factory (JsonFactory.))
+(defvar- #^JsonFactory factory
+  (doto (JsonFactory.)
+    (.configure JsonParser$Feature/ALLOW_UNQUOTED_CONTROL_CHARS true)))
 
 (defn generate-string
   {:tag String
