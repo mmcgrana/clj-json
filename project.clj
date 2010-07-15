@@ -8,4 +8,4 @@
                  [org.clojure/clojure-contrib "1.1.0"]
                  [org.codehaus.jackson/jackson-core-asl "1.5.0"]]
   :dev-dependencies [[org.clojars.mmcgrana/lein-clojars "0.5.0"]
-                     [org.clojars.mmcgrana/lein-javac "0.1.0"]])
+                     [lein-javac "1.2.0-SNAPSHOT"]])
