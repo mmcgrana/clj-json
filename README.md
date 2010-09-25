@@ -34,6 +34,6 @@ read via `parse-string` and `parsed-seq` as strings.
 To build, test, and package the `clj-json` source:
     
     $ lein deps
-    $ lein compile-java
+    $ lein javac
     $ lein test
     $ lein jar
