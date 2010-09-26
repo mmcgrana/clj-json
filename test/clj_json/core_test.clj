@@ -15,6 +15,12 @@
            (json/generate-string
              {:foo "bar" 1 "bat" (long 2) "bang" (bigint 3) "biz"})))))
 
-(deftest parsed-seq
+(deftest test-keywords
+  (is (= {:foo "bar" :bat 1}
+         (json/parse-string
+           (json/generate-string {:foo "bar" :bat 1})
+           true))))
+
+(deftest test-parsed-seq
   (let [br (BufferedReader. (StringReader. "1\n2\n3\n"))]
     (is (= (list 1 2 3) (json/parsed-seq br)))))

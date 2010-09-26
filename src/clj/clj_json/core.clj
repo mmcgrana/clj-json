@@ -20,17 +20,19 @@
 
 (defn parse-string
   "Returns the Clojure object corresponding to the given JSON-encoded string."
-  [string]
-  (JsonExt/parse (.createJsonParser factory (StringReader. string)) true nil))
+  [string & [keywords]]
+  (JsonExt/parse
+    (.createJsonParser factory (StringReader. string))
+    true (or keywords false) nil))
 
-(defn- parsed-seq* [#^JsonParser parser]
+(defn- parsed-seq* [#^JsonParser parser keywords]
   (let [eof (Object.)]
     (lazy-seq
-      (let [elem (JsonExt/parse parser true eof)]
+      (let [elem (JsonExt/parse parser true keywords eof)]
         (if-not (identical? elem eof)
-          (cons elem (parsed-seq* parser)))))))
+          (cons elem (parsed-seq* parser keywords)))))))
 
-(defn parsed-seq [#^BufferedReader reader]
+(defn parsed-seq [#^BufferedReader reader & [keywords]]
   "Returns a lazy seq of Clojure objects corresponding to the JSON read from
   the given reader. The seq continues until the end of the reader is reached."
-  (parsed-seq* (.createJsonParser factory reader)))
+  (parsed-seq* (.createJsonParser factory reader) (or keywords false)))

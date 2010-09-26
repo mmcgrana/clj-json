@@ -87,7 +87,7 @@ public class JsonExt {
     }
   }
 
-  public static Object parse(JsonParser jp, boolean first, Object eofValue) throws Exception {
+  public static Object parse(JsonParser jp, boolean first, boolean keywords, Object eofValue) throws Exception {
     if (first) {
       jp.nextToken();
       if (jp.getCurrentToken() == null) {
@@ -99,9 +99,10 @@ public class JsonExt {
         ITransientMap map = PersistentArrayMap.EMPTY.asTransient();
         jp.nextToken();
         while (jp.getCurrentToken() != JsonToken.END_OBJECT) {
-          String key = jp.getText();
+          String keyStr = jp.getText();
           jp.nextToken();
-          map = map.assoc(key, parse(jp, false, eofValue));
+          Object key = keywords ? Keyword.intern(keyStr) : keyStr;
+          map = map.assoc(key, parse(jp, false, keywords, eofValue));
           jp.nextToken();
         }
         return map.persistent();
@@ -110,7 +111,7 @@ public class JsonExt {
         ITransientCollection vec = PersistentVector.EMPTY.asTransient();
         jp.nextToken();
         while (jp.getCurrentToken() != JsonToken.END_ARRAY) {
-          vec = vec.conj(parse(jp, false, eofValue));
+          vec = vec.conj(parse(jp, false, keywords, eofValue));
           jp.nextToken();
         }
         return vec.persistent();
