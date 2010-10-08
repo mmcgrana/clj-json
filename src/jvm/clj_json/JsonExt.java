@@ -76,6 +76,9 @@ public class JsonExt {
     } else if (obj instanceof Double) {
       jg.writeNumber((Double) obj);
     
+    } else if (obj instanceof Float) {
+      jg.writeNumber((Float) obj);
+    
     } else if (obj instanceof Boolean) {
       jg.writeBoolean((Boolean) obj);
     
