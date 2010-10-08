@@ -9,6 +9,9 @@
              "vec" [1 2 3] "map" {"a" "b"} "list" (list "a" "b")}]
     (is (= obj (json/parse-string (json/generate-string obj))))))
 
+(deftest test-generate-accepts-float
+  (is (= "3.14" (json/generate-string (float 3.14)))))
+  
 (deftest test-key-coercion
   (is (= {"foo" "bar" "1" "bat" "2" "bang" "3" "biz"}
          (json/parse-string
