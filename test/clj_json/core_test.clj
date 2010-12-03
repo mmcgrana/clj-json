@@ -27,3 +27,9 @@
 (deftest test-parsed-seq
   (let [br (BufferedReader. (StringReader. "1\n2\n3\n"))]
     (is (= (list 1 2 3) (json/parsed-seq br)))))
+
+(deftest test-smile-round-trip
+  (let [obj {"int" 3 "long" 52001110638799097 "bigint" 9223372036854775808
+             "double" 1.23 "boolean" true "nil" nil "string" "string"
+             "vec" [1 2 3] "map" {"a" "b"} "list" (list "a" "b")}]
+    (is (= obj (json/parse-smile (json/generate-smile obj))))))
