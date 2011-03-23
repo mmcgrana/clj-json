@@ -37,3 +37,7 @@ To build, test, and package the `clj-json` source:
     $ lein javac
     $ lein test
     $ lein jar
+
+## License
+
+Release under an MIT license.
