@@ -18,38 +18,38 @@ import clojure.lang.Seqable;
 
 public class JsonExt {
   public static void generate(JsonGenerator jg, Object obj) throws Exception {
-    
+
 	if (obj instanceof String) {
       jg.writeString((String) obj);
-    
+
 	} else if (obj instanceof Number) {
-    
+
 			if (obj instanceof Integer) {
 				jg.writeNumber((Integer) obj);
-    
+
 			} else if (obj instanceof Long) {
 				jg.writeNumber((Long) obj);
-    
+
 			} else if (obj instanceof BigInteger) {
 				jg.writeNumber((BigInteger) obj);
-    
+
 			} else if (obj instanceof Double) {
 				jg.writeNumber((Double) obj);
-    
+
 			} else if (obj instanceof Float) {
 				jg.writeNumber((Float) obj);
-    
+
 			}
 		} else if (obj instanceof Boolean) {
-			
+
       jg.writeBoolean((Boolean) obj);
-    
+
     } else if (obj == null) {
       jg.writeNull();
-    
+
 	} else if (obj instanceof Keyword) {
 		jg.writeString(((Keyword) obj).getName());
-		
+
     } else if (obj instanceof IPersistentMap) {
 		IPersistentMap map = (IPersistentMap) obj;
 		ISeq mSeq = map.seq();
@@ -72,7 +72,7 @@ public class JsonExt {
 			mSeq = mSeq.next();
 		}
 		jg.writeEndObject();
-		
+
     } else if (obj instanceof IPersistentVector) {
 		IPersistentVector vec = (IPersistentVector) obj;
 		jg.writeStartArray();
@@ -80,7 +80,7 @@ public class JsonExt {
 			generate(jg, vec.nth(i));
 		}
 		jg.writeEndArray();
-		
+
     } else if ((obj instanceof ISeq) || (obj instanceof IPersistentList)) {
 		ISeq lSeq = ((Seqable) obj).seq();
 		jg.writeStartArray();
@@ -114,7 +114,7 @@ public class JsonExt {
           jp.nextToken();
         }
         return map.persistent();
-    
+
       case START_ARRAY:
         ITransientCollection vec = PersistentVector.EMPTY.asTransient();
         jp.nextToken();
@@ -123,25 +123,25 @@ public class JsonExt {
           jp.nextToken();
         }
         return vec.persistent();
-    
+
       case VALUE_STRING:
         return jp.getText();
-    
+
       case VALUE_NUMBER_INT:
         return jp.getNumberValue();
-    
+
       case VALUE_NUMBER_FLOAT:
         return jp.getDoubleValue();
-      
+
       case VALUE_TRUE:
         return Boolean.TRUE;
-    
+
       case VALUE_FALSE:
         return Boolean.FALSE;
-      
+
       case VALUE_NULL:
         return null;
-    
+
       default:
         throw new Exception("Cannot parse " + jp.getCurrentToken());
     }
