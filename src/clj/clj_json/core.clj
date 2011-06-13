@@ -2,11 +2,15 @@
   (:import (clj_json JsonExt)
            (org.codehaus.jackson JsonFactory JsonParser JsonParser$Feature)
            (java.io StringWriter StringReader BufferedReader))
-  (:use (clojure.contrib [def :only (defvar-)])))
+  (:use (clojure.contrib [def :only (defvar-)])
+        (clojure [walk :only (postwalk)])))
 
 (defvar- #^JsonFactory factory
   (doto (JsonFactory.)
     (.configure JsonParser$Feature/ALLOW_UNQUOTED_CONTROL_CHARS true)))
+
+(defn- coerce-sets [obj]
+  (postwalk (fn [x] (if (set? x) (into [] x) x)) obj))
 
 (defn generate-string
   {:tag String
@@ -14,7 +18,7 @@
   [obj]
   (let [sw        (StringWriter.)
         generator (.createJsonGenerator factory sw)]
-    (JsonExt/generate generator obj)
+    (JsonExt/generate generator (coerce-sets obj))
     (.flush generator)
     (.toString sw)))
 
