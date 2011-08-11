@@ -4,19 +4,20 @@ Fast JSON encoding and decoding for Clojure via the Jackson library.
 
 ## Synopsis
 
-    (require '(clj-json [core :as json]))
-    (import '(java.io StringReader BufferedReader))
-    
-    (json/generate-string {"foo" "bar"})
-    "{\"foo\":\"bar\"}"
-    
-    (json/parse-string "{\"foo\":\"bar\"}")
-    {"foo" "bar"}
-    
-    (json/parsed-seq
-      (BufferedReader. (StringReader. "{\"foo\":\"bar\"}{\"biz\":\"bat\"}")))
-    ({"foo" "bar"} {"biz" "bat"})
-    
+```clojure
+(require '(clj-json [core :as json]))
+(import '(java.io StringReader BufferedReader))
+
+(json/generate-string {"foo" "bar"})
+"{\"foo\":\"bar\"}"
+
+(json/parse-string "{\"foo\":\"bar\"}")
+{"foo" "bar"}
+
+(json/parsed-seq
+  (BufferedReader. (StringReader. "{\"foo\":\"bar\"}{\"biz\":\"bat\"}")))
+({"foo" "bar"} {"biz" "bat"})
+```
 
 ## Installation
 
@@ -24,15 +25,28 @@ Fast JSON encoding and decoding for Clojure via the Jackson library.
 
 ## Encoding/Decoding Details
 
-`clj-json` can generate JSON for maps, vectors, lists, keywords, strings, integers, doubles, and booleans.
+`clj-json` can generate JSON for maps, vectors, lists, keywords, strings, integers, doubles, floats, and booleans.
+By default sets will be coerced into lists.
 
-Note that keywords generate as strings without a leading :, and will
-read via `parse-string` and `parsed-seq` as strings.
+Note that keywords generate as strings without a leading :, and will read via `parse-string` and `parsed-seq` as strings,
+however both have an optional boolean argument to keywordize the keys of maps.
+Namespaced keywords will encode to the form "namespace/keyword" by default.
+
+## Redefining Coercions
+
+Coercions can be redefined by binding `*coercions*`. For example, to coerce sets into existence map:
+
+```clojure
+(binding [clj-json.core/*coercions* {clojure.lang.IPersistentSet (fn [x] (reduce (fn [acc x] (assoc acc x true)) {} x))}]
+  (is (= {"foo" {"bang" true, "bar" true}}
+       (json/parse-string
+        (json/generate-string {"foo" #{"bar" "bang"}})))))
+```
 
 ## Development
 
-To build, test, and package the `clj-json` source:
-    
+To build, test, and package the `clj-json` source using Leiningen:
+
     $ lein deps
     $ lein javac
     $ lein test
