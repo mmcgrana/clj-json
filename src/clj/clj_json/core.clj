@@ -1,11 +1,27 @@
 (ns clj-json.core
   (:import (clj_json JsonExt)
            (org.codehaus.jackson JsonFactory JsonParser JsonParser$Feature)
+<<<<<<< HEAD
            (java.io StringWriter StringReader BufferedReader)))
+=======
+           (java.io StringWriter StringReader BufferedReader))
+  (:use (clojure.contrib [def :only (defvar-)])
+        (clojure [walk :only (postwalk)]
+                 [string :only (join)])))
+>>>>>>> implement user extendable coercions
 
 (def ^{:tag JsonFactory, :private true} factory
   (doto (JsonFactory.)
     (.configure JsonParser$Feature/ALLOW_UNQUOTED_CONTROL_CHARS true)))
+
+(def *coercions* {clojure.lang.IPersistentSet vec
+                  clojure.lang.Keyword (fn [x] (join "/" (remove nil? ((juxt namespace name) x))))})
+
+(defn- coerce [obj]
+  (postwalk (fn [x]
+              (if-let [coercion (seq (filter #(instance? (key %) x) *coercions*))]
+                ((-> coercion first val) x)
+                x)) obj))
 
 (defn generate-string
   "Returns a JSON-encoding String for the given Clojure object."
@@ -13,7 +29,7 @@
   [obj]
   (let [sw        (StringWriter.)
         generator (.createJsonGenerator factory sw)]
-    (JsonExt/generate generator obj)
+    (JsonExt/generate generator (coerce obj))
     (.flush generator)
     (.toString sw)))
 
