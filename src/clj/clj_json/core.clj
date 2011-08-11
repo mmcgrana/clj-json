@@ -1,16 +1,11 @@
 (ns clj-json.core
   (:import (clj_json JsonExt)
            (org.codehaus.jackson JsonFactory JsonParser JsonParser$Feature)
-<<<<<<< HEAD
-           (java.io StringWriter StringReader BufferedReader)))
-=======
            (java.io StringWriter StringReader BufferedReader))
-  (:use (clojure.contrib [def :only (defvar-)])
-        (clojure [walk :only (postwalk)]
+  (:use (clojure [walk :only (postwalk)]
                  [string :only (join)])))
->>>>>>> implement user extendable coercions
 
-(def ^{:tag JsonFactory, :private true} factory
+(def ^{:private true :tag JsonFactory} factory
   (doto (JsonFactory.)
     (.configure JsonParser$Feature/ALLOW_UNQUOTED_CONTROL_CHARS true)))
 
