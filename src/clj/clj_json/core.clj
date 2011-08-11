@@ -45,5 +45,5 @@
 (defn parsed-seq
   "Returns a lazy seq of Clojure objects corresponding to the JSON read from
   the given reader. The seq continues until the end of the reader is reached."
-  [#^BufferedReader reader & [keywords]]
+  [^BufferedReader reader & [keywords]]
   (parsed-seq* (.createJsonParser factory reader) (or keywords false)))
