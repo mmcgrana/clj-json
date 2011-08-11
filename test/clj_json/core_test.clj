@@ -11,7 +11,7 @@
 
 (deftest test-generate-accepts-float
   (is (= "3.14" (json/generate-string (float 3.14)))))
-  
+
 (deftest test-key-coercion
   (is (= {"foo" "bar" "1" "bat" "2" "bang" "3" "biz"}
          (json/parse-string
@@ -22,8 +22,23 @@
   (is (= {:foo "bar" :bat 1}
          (json/parse-string
            (json/generate-string {:foo "bar" :bat 1})
-           true))))
+           true)))
+  (is (= {:clj-json.core-test/foo "bar"}
+         (json/parse-string (json/generate-string {::foo "bar"}) true))))
 
 (deftest test-parsed-seq
   (let [br (BufferedReader. (StringReader. "1\n2\n3\n"))]
     (is (= (list 1 2 3) (json/parsed-seq br)))))
+
+(deftest test-set-coercion
+  (is (= {:foo ["bar" "bang"]}
+         (json/parse-string
+          (json/generate-string {:foo #{"bar" "bang"}})
+          true))))
+
+(deftest test-redefine-coercions
+  (binding [clj-json.core/*coercions* {clojure.lang.IPersistentSet
+                                       (fn [x] (reduce (fn [acc x] (assoc acc x true)) {} x))}]
+    (is (= {"foo" {"bang" true, "bar" true}}
+           (json/parse-string
+            (json/generate-string {"foo" #{"bar" "bang"}}))))))
