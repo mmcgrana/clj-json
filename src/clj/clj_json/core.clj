@@ -9,8 +9,7 @@
   (doto (JsonFactory.)
     (.configure JsonParser$Feature/ALLOW_UNQUOTED_CONTROL_CHARS true)))
 
-(def *coercions* {clojure.lang.IPersistentSet vec
-                  clojure.lang.Keyword (fn [x] (join "/" (remove nil? ((juxt namespace name) x))))})
+(def *coercions* nil)
 
 (defn- coerce [obj]
   (postwalk (fn [x]
@@ -24,7 +23,7 @@
   [obj]
   (let [sw        (StringWriter.)
         generator (.createJsonGenerator factory sw)]
-    (JsonExt/generate generator (coerce obj))
+    (JsonExt/generate generator *coercions* obj)
     (.flush generator)
     (.toString sw)))
 

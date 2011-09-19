@@ -4,6 +4,8 @@ import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonGenerator;
 import java.math.BigInteger;
+import java.util.Map;
+import clojure.lang.IFn;
 import clojure.lang.ISeq;
 import clojure.lang.IPersistentMap;
 import clojure.lang.IPersistentVector;
@@ -17,68 +19,90 @@ import clojure.lang.ITransientCollection;
 import clojure.lang.Seqable;
 
 public class JsonExt {
-    public static void generate(JsonGenerator jg, Object obj) throws Exception {
-        if (obj instanceof String) {
-            jg.writeString((String) obj);
-        } else if (obj instanceof Number) {
-            if (obj instanceof Integer) {
-                jg.writeNumber((Integer) obj);
-            } else if (obj instanceof Long) {
-                jg.writeNumber((Long) obj);
-            } else if (obj instanceof BigInteger) {
-                jg.writeNumber((BigInteger) obj);
-            } else if (obj instanceof Double) {
-                jg.writeNumber((Double) obj);
-            } else if (obj instanceof Float) {
-                jg.writeNumber((Float) obj);
-            }
-        } else if (obj instanceof Boolean) {
-            jg.writeBoolean((Boolean) obj);
-        } else if (obj == null) {
-            jg.writeNull();
-        } else if (obj instanceof Keyword) {
-            jg.writeString(((Keyword) obj).getName());
-        } else if (obj instanceof IPersistentMap) {
-            IPersistentMap map = (IPersistentMap) obj;
-            ISeq mSeq = map.seq();
-            jg.writeStartObject();
-            while (mSeq != null) {
-                IMapEntry me = (IMapEntry) mSeq.first();
-                Object key = me.key();
-                if (key instanceof Keyword) {
-                    jg.writeFieldName(((Keyword) key).getName());
-                } else if (key instanceof Integer) {
-                    jg.writeFieldName(((Integer) key).toString());
-                } else if (key instanceof BigInteger) {
-                    jg.writeFieldName(((BigInteger) key).toString());
-                } else if (key instanceof Long) {
-                    jg.writeFieldName(((Long) key).toString());
-                } else {
-                    jg.writeFieldName((String) key);
+    public static class Generator {
+        final JsonGenerator jg;
+        final Map coercions;
+
+        public Generator(JsonGenerator jg, Map coercions){
+            this.jg = jg;
+            this.coercions = coercions;
+        }
+
+        public void generate(Object obj) throws Exception{
+            if (this.coercions != null) {
+                IFn fn;
+                while ((fn = (IFn)coercions.get(obj.getClass())) != null){
+                    obj = fn.invoke(obj);
                 }
-                generate(jg, me.val());
-                mSeq = mSeq.next();
             }
-            jg.writeEndObject();
-        } else if (obj instanceof IPersistentVector) {
-            IPersistentVector vec = (IPersistentVector) obj;
-            jg.writeStartArray();
-            for (int i = 0; i < vec.count(); i++) {
-                generate(jg, vec.nth(i));
+
+            if (obj instanceof String) {
+                jg.writeString((String) obj);
+            } else if (obj instanceof Number) {
+                if (obj instanceof Integer) {
+                    jg.writeNumber((Integer) obj);
+                } else if (obj instanceof Long) {
+                    jg.writeNumber((Long) obj);
+                } else if (obj instanceof BigInteger) {
+                    jg.writeNumber((BigInteger) obj);
+                } else if (obj instanceof Double) {
+                    jg.writeNumber((Double) obj);
+                } else if (obj instanceof Float) {
+                    jg.writeNumber((Float) obj);
+                }
+            } else if (obj instanceof Boolean) {
+                jg.writeBoolean((Boolean) obj);
+            } else if (obj == null) {
+                jg.writeNull();
+            } else if (obj instanceof Keyword) {
+                jg.writeString(((Keyword) obj).getName());
+            } else if (obj instanceof IPersistentMap) {
+                IPersistentMap map = (IPersistentMap) obj;
+                ISeq mSeq = map.seq();
+                jg.writeStartObject();
+                while (mSeq != null) {
+                    IMapEntry me = (IMapEntry) mSeq.first();
+                    Object key = me.key();
+                    if (key instanceof Keyword) {
+                        jg.writeFieldName(((Keyword) key).getName());
+                    } else if (key instanceof Integer) {
+                        jg.writeFieldName(((Integer) key).toString());
+                    } else if (key instanceof BigInteger) {
+                        jg.writeFieldName(((BigInteger) key).toString());
+                    } else if (key instanceof Long) {
+                        jg.writeFieldName(((Long) key).toString());
+                    } else {
+                        jg.writeFieldName((String) key);
+                    }
+                    generate(me.val());
+                    mSeq = mSeq.next();
+                }
+                jg.writeEndObject();
+            } else if (obj instanceof IPersistentVector) {
+                IPersistentVector vec = (IPersistentVector) obj;
+                jg.writeStartArray();
+                for (int i = 0; i < vec.count(); i++) {
+                    generate(vec.nth(i));
+                }
+                jg.writeEndArray();
+            } else if ((obj instanceof ISeq) || (obj instanceof IPersistentList)) {
+                ISeq lSeq = ((Seqable) obj).seq();
+                jg.writeStartArray();
+                while (lSeq != null) {
+                    generate(lSeq.first());
+                    lSeq = lSeq.next();
+                }
+                jg.writeEndArray();
             }
-            jg.writeEndArray();
-        } else if ((obj instanceof ISeq) || (obj instanceof IPersistentList)) {
-            ISeq lSeq = ((Seqable) obj).seq();
-            jg.writeStartArray();
-            while (lSeq != null) {
-                generate(jg, lSeq.first());
-                lSeq = lSeq.next();
+            else {
+                throw new Exception("Cannot generate " + obj);
             }
-            jg.writeEndArray();
         }
-        else {
-            throw new Exception("Cannot generate " + obj);
-        }
+    }
+
+    public static void generate(JsonGenerator jg, Map coercions, Object obj) throws Exception {
+        Generator g = new Generator(jg, coercions);
+        g.generate(obj);
     }
 
     public static Object parse(JsonParser jp, boolean first, boolean keywords, Object eofValue) throws Exception {

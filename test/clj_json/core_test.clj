@@ -22,22 +22,14 @@
   (is (= {:foo "bar" :bat 1}
          (json/parse-string
            (json/generate-string {:foo "bar" :bat 1})
-           true)))
-  (is (= {:clj-json.core-test/foo "bar"}
-         (json/parse-string (json/generate-string {::foo "bar"}) true))))
+           true))))
 
 (deftest test-parsed-seq
   (let [br (BufferedReader. (StringReader. "1\n2\n3\n"))]
     (is (= (list 1 2 3) (json/parsed-seq br)))))
 
-(deftest test-set-coercion
-  (is (= {:foo ["bar" "bang"]}
-         (json/parse-string
-          (json/generate-string {:foo #{"bar" "bang"}})
-          true))))
-
 (deftest test-redefine-coercions
-  (binding [clj-json.core/*coercions* {clojure.lang.IPersistentSet
+  (binding [clj-json.core/*coercions* {clojure.lang.PersistentHashSet
                                        (fn [x] (reduce (fn [acc x] (assoc acc x true)) {} x))}]
     (is (= {"foo" {"bang" true, "bar" true}}
            (json/parse-string
