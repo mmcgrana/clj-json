@@ -11,12 +11,6 @@
 
 (def *coercions* nil)
 
-(defn- coerce [obj]
-  (postwalk (fn [x]
-              (if-let [coercion (seq (filter #(instance? (key %) x) *coercions*))]
-                ((-> coercion first val) x)
-                x)) obj))
-
 (defn generate-string
   "Returns a JSON-encoding String for the given Clojure object."
   {:tag String}
