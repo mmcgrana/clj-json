@@ -1,4 +1,4 @@
-(defproject clj-json "0.4.1"
+(defproject clj-json "0.4.2"
   :description "Fast JSON encoding and decoding for Clojure via the Jackson library."
   :url "http://github.com/mmcgrana/clj-json"
   :source-path "src/clj"
