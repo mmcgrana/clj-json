@@ -5,6 +5,7 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonGenerator;
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.Set;
 import clojure.lang.IFn;
 import clojure.lang.ISeq;
 import clojure.lang.IPersistentMap;
@@ -78,19 +79,10 @@ public class JsonExt {
                     mSeq = mSeq.next();
                 }
                 jg.writeEndObject();
-            } else if (obj instanceof IPersistentVector) {
-                IPersistentVector vec = (IPersistentVector) obj;
+            } else if (obj instanceof Iterable) {
                 jg.writeStartArray();
-                for (int i = 0; i < vec.count(); i++) {
-                    generate(vec.nth(i));
-                }
-                jg.writeEndArray();
-            } else if ((obj instanceof ISeq) || (obj instanceof IPersistentList)) {
-                ISeq lSeq = ((Seqable) obj).seq();
-                jg.writeStartArray();
-                while (lSeq != null) {
-                    generate(lSeq.first());
-                    lSeq = lSeq.next();
+                for (Object o : (Iterable)obj){
+                    generate(o);
                 }
                 jg.writeEndArray();
             }
