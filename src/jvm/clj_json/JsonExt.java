@@ -30,7 +30,7 @@ public class JsonExt {
         }
 
         public void generate(Object obj) throws Exception{
-            if (this.coercions != null) {
+            if (this.coercions != null && obj != null) {
                 IFn fn;
                 while ((fn = (IFn)coercions.get(obj.getClass())) != null){
                     obj = fn.invoke(obj);
