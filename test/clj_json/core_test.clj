@@ -44,6 +44,18 @@
 (deftest test-redefine-coercions-with-nil
   (binding [clj-json.core/*coercions* {clojure.lang.PersistentHashSet
                                        (fn [x] (reduce (fn [acc x] (assoc acc x true)) {} x))}]
-    (is (= nil 
+    (is (= nil
            (json/parse-string
-            (json/generate-string nil))))))
+            (json/generate-string nil))))
+    (is (= {"foo" {"bar" nil}}
+           (json/parse-string
+            (json/generate-string {"foo" {"bar" nil}})))))
+
+  (testing "coercing nil"
+    (binding [clj-json.core/*coercions* {nil (constantly "empty")}]
+      (is (= "empty"
+             (json/parse-string
+              (json/generate-string nil))))
+      (is (= {"foo" {"bar" "empty"}}
+             (json/parse-string
+              (json/generate-string {"foo" {"bar" nil}})))))))
