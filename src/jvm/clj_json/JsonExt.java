@@ -29,10 +29,17 @@ public class JsonExt {
             this.coercions = coercions;
         }
 
+        public Object coercionKey(Object obj){
+            if (obj != null) {
+                return obj.getClass();
+            }
+            return null;
+        }
+
         public void generate(Object obj) throws Exception{
-            if (this.coercions != null && obj != null) {
+            if (this.coercions != null) {
                 IFn fn;
-                while ((fn = (IFn)coercions.get(obj.getClass())) != null){
+                while ((fn = (IFn)coercions.get(this.coercionKey(obj))) != null){
                     obj = fn.invoke(obj);
                 }
             }
