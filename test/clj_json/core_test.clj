@@ -40,3 +40,10 @@
     (is (= {"foo" {"bang" true, "bar" true}}
            (json/parse-string
             (json/generate-string {"foo" #{"bar" "bang"}}))))))
+
+(deftest test-redefine-coercions-with-nil
+  (binding [clj-json.core/*coercions* {clojure.lang.PersistentHashSet
+                                       (fn [x] (reduce (fn [acc x] (assoc acc x true)) {} x))}]
+    (is (= nil 
+           (json/parse-string
+            (json/generate-string nil))))))
