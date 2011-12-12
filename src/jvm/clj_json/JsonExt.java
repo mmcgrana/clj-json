@@ -9,17 +9,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import clojure.lang.IFn;
-import clojure.lang.ISeq;
-import clojure.lang.IPersistentMap;
-import clojure.lang.IPersistentVector;
-import clojure.lang.IMapEntry;
 import clojure.lang.Keyword;
 import clojure.lang.PersistentArrayMap;
 import clojure.lang.PersistentVector;
 import clojure.lang.ITransientMap;
-import clojure.lang.IPersistentList;
 import clojure.lang.ITransientCollection;
-import clojure.lang.Seqable;
 
 public class JsonExt {
     public static class Generator {
