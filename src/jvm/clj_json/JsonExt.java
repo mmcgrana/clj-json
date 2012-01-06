@@ -14,6 +14,8 @@ import clojure.lang.PersistentArrayMap;
 import clojure.lang.PersistentVector;
 import clojure.lang.ITransientMap;
 import clojure.lang.ITransientCollection;
+import clojure.lang.Seqable;
+import clojure.lang.BigInt;
 
 public class JsonExt {
     public static class Generator {
@@ -49,6 +51,8 @@ public class JsonExt {
                     jg.writeNumber((Long) obj);
                 } else if (obj instanceof BigInteger) {
                     jg.writeNumber((BigInteger) obj);
+                } else if (obj instanceof BigInt) {
+                  jg.writeNumber(((BigInt) obj).toBigInteger());
                 } else if (obj instanceof Double) {
                     jg.writeNumber((Double) obj);
                 } else if (obj instanceof Float) {
@@ -73,6 +77,8 @@ public class JsonExt {
                         jg.writeFieldName(((Integer) key).toString());
                     } else if (key instanceof BigInteger) {
                         jg.writeFieldName(((BigInteger) key).toString());
+                    } else if (key instanceof BigInt) {
+                        jg.writeFieldName(((BigInt) key).toString());
                     } else if (key instanceof Long) {
                         jg.writeFieldName(((Long) key).toString());
                     } else {
