@@ -9,7 +9,7 @@
   (doto (JsonFactory.)
     (.configure JsonParser$Feature/ALLOW_UNQUOTED_CONTROL_CHARS true)))
 
-(def *coercions* nil)
+(def ^{:dynamic true} *coercions* nil)
 
 (defn generate-string
   "Returns a JSON-encoding String for the given Clojure object."
