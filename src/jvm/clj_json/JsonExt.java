@@ -71,16 +71,8 @@ public class JsonExt {
                     Object key = me.getKey();
                     if (key instanceof Keyword) {
                         jg.writeFieldName(((Keyword) key).getName());
-                    } else if (key instanceof Integer) {
-                        jg.writeFieldName(((Integer) key).toString());
-                    } else if (key instanceof BigInteger) {
-                        jg.writeFieldName(((BigInteger) key).toString());
-                    } else if (key instanceof BigInt) {
-                        jg.writeFieldName(((BigInt) key).toString());
-                    } else if (key instanceof Long) {
-                        jg.writeFieldName(((Long) key).toString());
                     } else {
-                        jg.writeFieldName((String) key);
+                        jg.writeFieldName(key.toString());
                     }
                     generate(me.getValue());
                 }
