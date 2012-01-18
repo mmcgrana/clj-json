@@ -65,11 +65,9 @@ public class JsonExt {
             } else if (obj instanceof Keyword) {
                 jg.writeString(((Keyword) obj).getName());
             } else if (obj instanceof Map) {
-                Map map = (Map) obj;
-                Iterator iter = map.entrySet().iterator();
+                Map<?,?> map = (Map<?,?>) obj;
                 jg.writeStartObject();
-                while (iter.hasNext()) {
-                    Entry me = (Entry) iter.next();
+                for (Map.Entry<?,?> me : map.entrySet()) {
                     Object key = me.getKey();
                     if (key instanceof Keyword) {
                         jg.writeFieldName(((Keyword) key).getName());
