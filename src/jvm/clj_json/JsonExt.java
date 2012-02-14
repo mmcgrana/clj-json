@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.math.BigDecimal;
 import clojure.lang.IFn;
 import clojure.lang.Keyword;
 import clojure.lang.PersistentArrayMap;
@@ -57,6 +58,10 @@ public class JsonExt {
                     jg.writeNumber((Double) obj);
                 } else if (obj instanceof Float) {
                     jg.writeNumber((Float) obj);
+                } else if (obj instanceof BigDecimal) {
+                    jg.writeNumber((BigDecimal) obj);
+                } else {
+                    throw new Exception("Cannot generate number "+obj);
                 }
             } else if (obj instanceof Boolean) {
                 jg.writeBoolean((Boolean) obj);
