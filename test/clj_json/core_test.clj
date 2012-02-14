@@ -61,3 +61,10 @@
       (is (= {"foo" {"bar" "empty"}}
              (json/parse-string
               (json/generate-string {"foo" {"bar" nil}})))))))
+
+
+(deftest test-bigdecimal
+  (is (= "{\"data1\":1,\"data2\":1.11}"
+          (json/generate-string {:data1 1M :data2 1.11M})))
+)
+
