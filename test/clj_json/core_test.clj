@@ -1,7 +1,7 @@
 (ns clj-json.core-test
   (:use clojure.test)
   (:require [clj-json.core :as json])
-  (:import (java.io StringReader BufferedReader)
+  (:import (java.io StringReader BufferedReader File FileWriter)
            (java.util HashMap)))
 
 (deftest test-string-round-trip
@@ -18,7 +18,16 @@
   (is (= {"foo" "bar" "1" "bat" "2" "bang" "3" "biz"}
          (json/parse-string
            (json/generate-string
-             {:foo "bar" 1 "bat" (long 2) "bang" (bigint 3) "biz"})))))
+            {:foo "bar" 1 "bat" (long 2) "bang" (bigint 3) "biz"})))))
+
+(deftest test-write-to-tmp
+  (let [f           (File/createTempFile "clj-json-test" "dat")
+        writer      (FileWriter. f)
+        test-object {"a" "cow" "jumped" "over" "the" 88}]
+    (try
+      (json/generate-to-writer test-object writer)
+      (is (= (slurp f) (json/generate-string test-object)))
+      (finally (.close writer)))))
 
 (deftest test-keywords
   (is (= {:foo "bar" :bat 1}
