@@ -1,7 +1,7 @@
 (ns clj-json.core
   (:import (clj_json JsonExt)
            (org.codehaus.jackson JsonFactory JsonParser JsonParser$Feature)
-           (java.io StringWriter StringReader BufferedReader))
+           (java.io Writer StringWriter StringReader BufferedReader))
   (:use (clojure [walk :only (postwalk)]
                  [string :only (join)])))
 
@@ -11,14 +11,19 @@
 
 (def ^{:dynamic true} *coercions* nil)
 
+(defn generate-to-writer
+  "Attempts to write a json-encoded string for the given Object directly to the given writer."
+  [obj ^Writer writer]
+  (let [generator (.createJsonGenerator factory writer)]
+    (JsonExt/generate generator *coercions* obj)
+    (.flush generator)))
+
 (defn generate-string
   "Returns a JSON-encoding String for the given Clojure object."
   {:tag String}
   [obj]
-  (let [sw        (StringWriter.)
-        generator (.createJsonGenerator factory sw)]
-    (JsonExt/generate generator *coercions* obj)
-    (.flush generator)
+  (let [sw        (StringWriter.)]
+    (generate-to-writer obj sw)
     (.toString sw)))
 
 (defn parse-string
