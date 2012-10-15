@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.math.BigDecimal;
 import clojure.lang.IFn;
 import clojure.lang.Keyword;
@@ -88,7 +89,9 @@ public class JsonExt {
                     generate(o);
                 }
                 jg.writeEndArray();
-            }
+            } else if (obj instanceof Future) {
+		generate(((Future) obj).get());
+	    }
             else {
                 throw new Exception("Cannot generate " + obj);
             }
