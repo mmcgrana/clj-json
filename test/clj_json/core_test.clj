@@ -74,8 +74,12 @@
 
 (deftest test-bigdecimal
   (is (= "{\"data1\":1,\"data2\":1.11}"
-	 (json/generate-string {:data1 1M :data2 1.11M}))))
+   (json/generate-string {:data1 1M :data2 1.11M}))))
 
 (deftest test-future
   (is (= "42"
-	 (json/generate-string (future 42)))))
+         (json/generate-string (future 42)))))
+
+(deftest test-atom
+  (is (= "42"
+         (json/generate-string (atom 42)))))
