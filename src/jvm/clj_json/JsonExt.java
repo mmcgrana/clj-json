@@ -142,6 +142,8 @@ public class JsonExt {
       return Boolean.FALSE;
     case VALUE_NULL:
       return null;
+    case END_ARRAY:
+      return null;
     default:
       throw new Exception("Cannot parse " + jp.getCurrentToken());
     }
