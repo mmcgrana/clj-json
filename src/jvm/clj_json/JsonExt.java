@@ -3,6 +3,7 @@ package clj_json;
 import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser.NumberType;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
@@ -133,7 +134,11 @@ public class JsonExt {
     case VALUE_STRING:
       return jp.getText();
     case VALUE_NUMBER_INT:
-      return jp.getNumberValue();
+      if(jp.getNumberType() == NumberType.BIG_INTEGER) {
+	return jp.getBigIntegerValue();
+      } else {
+	return jp.getLongValue();
+      }
     case VALUE_NUMBER_FLOAT:
       return jp.getDoubleValue();
     case VALUE_TRUE:
