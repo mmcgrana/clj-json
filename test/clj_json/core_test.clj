@@ -14,6 +14,9 @@
 (deftest test-generate-accepts-float
   (is (= "3.14" (json/generate-string (float 3.14)))))
 
+(deftest test-generate-accepts-ratios
+  (is (= "0.5" (json/generate-string 2/4))))
+
 (deftest test-key-coercion
   (is (= {"foo" "bar" "1" "bat" "2" "bang" "3" "biz"}
          (json/parse-string
