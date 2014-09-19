@@ -17,6 +17,7 @@ import clojure.lang.ITransientMap;
 import clojure.lang.ITransientCollection;
 import clojure.lang.Seqable;
 import clojure.lang.BigInt;
+import clojure.lang.Ratio;
 import clojure.lang.IDeref;
 
 public class JsonExt {
@@ -61,6 +62,8 @@ public class JsonExt {
           jg.writeNumber((Float) obj);
         } else if (obj instanceof BigDecimal) {
           jg.writeNumber((BigDecimal) obj);
+        } else if (obj instanceof Ratio) {
+            jg.writeNumber(((Ratio) obj).doubleValue());
         } else {
           throw new Exception("Cannot generate number "+obj);
         }
